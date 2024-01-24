@@ -2,28 +2,25 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const admin = require('firebase-admin');
-const serviceAccount = require('./project-community-1643c-firebase-adminsdk-96s3g-62089cdeb9.json'); // Update with your own service account key
+const serviceAccount = require('./project-community-1643c-firebase-adminsdk-96s3g-62089cdeb9.json');
 
 const app = express();
 const port = 5500;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json()); // Parse JSON bodies
+app.use(express.json());
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
 });
 
+// Initialize Firestore
+const db = admin.firestore();
+
 const firebaseConfig = {
-    apiKey: "AIzaSyCCvwJRoh0LbxMGTzU5T_E7S_g-rF3zFiE",
-    authDomain: "project-community-1643c.firebaseapp.com",
-    projectId: "project-community-1643c",
-    storageBucket: "project-community-1643c.appspot.com",
-    messagingSenderId: "178142102762",
-    appId: "1:178142102762:web:82473a9f6f6b56c0ccc393",
-    measurementId: "G-2C1TQS1MC8"
-  };
+  // ... (your Firebase config)
+};
 
 app.post('/register', async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
@@ -33,8 +30,16 @@ app.post('/register', async (req, res) => {
     errorMessage.push('All fields are mandatory.');
   }
 
-  if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password) || !/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password)) {
-    errorMessage.push('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one special character, and one digit.');
+  if (
+    password.length < 8 ||
+    !/[A-Z]/.test(password) ||
+    !/[a-z]/.test(password) ||
+    !/\d/.test(password) ||
+    !/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password)
+  ) {
+    errorMessage.push(
+      'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one special character, and one digit.'
+    );
   }
 
   if (password !== confirmPassword) {
@@ -45,7 +50,7 @@ app.post('/register', async (req, res) => {
     res.status(400).json({ error: errorMessage });
   } else {
     try {
-      // Register the user in Firebase (update with your own logic)
+      // Register the user in Firebase
       const userRecord = await admin.auth().createUser({
         email: email,
         password: password,
@@ -54,7 +59,12 @@ app.post('/register', async (req, res) => {
 
       console.log('Successfully created new user:', userRecord.uid);
 
-      // You can also save additional user data to Firestore or Realtime Database
+      // Save additional user data to Firestore
+      await db.collection('Contributors').doc(userRecord.uid).set({
+        name: name,
+        email: email,
+        password: password, // Note: You may want to hash or omit this for security reasons
+      });
 
       res.json({ success: 'Registration successful!' });
     } catch (error) {
@@ -62,6 +72,34 @@ app.post('/register', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   }
+});
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    const errorMessage = [];
+
+    if (!email || !password) {
+        errorMessage.push('Email and password are required.');
+        res.status(400).json({ error: errorMessage });
+        return;
+    }
+
+    try {
+        // Check if the user exists in the Contributors collection
+        const contributorsRef = db.collection('Contributors');
+        const querySnapshot = await contributorsRef.where('email', '==', email).where('password', '==', password).get();
+
+        if (querySnapshot.empty) {
+            errorMessage.push('Invalid email or password.');
+            res.status(401).json({ error: errorMessage });
+        } else {
+            // Login successful
+            res.json({ success: 'Login successful!' });
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 app.listen(port, () => {
