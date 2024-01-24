@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #cfeef1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #f5faf9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 400px;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: #fff8f8;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .page-heading {
+            text-align: center;
+            color: #333;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            padding: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-group button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header"><p><b>Welcome to <br> "Project Community" !!</b><br>
+            <i></i>
+        </p></div>
+        <div class="page-heading">
+            Register Yourself...
+        </div>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" name="confirm-password" required>
+
+            <button type="button" onclick="validateRegistration()">Register</button>
+            <div class="error-message" id="error-message"></div>
+        </div>
+    </div>
+
+    <script>
+        async function validateRegistration() {
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirm-password').value;
+            var errorMessage = document.getElementById('error-message');
+
+            if (name.trim() === '' || email.trim() === '' || password.trim() === '' || confirmPassword.trim() === '') {
+                errorMessage.textContent = 'All fields are mandatory.';
+            } else if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password) || !/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password)) {
+                errorMessage.textContent = 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one special character, and one digit.';
+            } else if (password !== confirmPassword) {
+                errorMessage.textContent = 'Confirm Password must match Password.';
+            } else {
+                try {
+                    let response = await fetch('http://localhost:5500/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            password: password,
+                            confirmPassword: confirmPassword,
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        errorMessage.textContent = 'Failed to register. Please try again.';
+                        return;
+                    }
+
+                    // Check if the response contains JSON data
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const data = await response.json();
+                        console.log('Registration successful:', data.success);
+                        window.location.href="Login.html";
+                    } else {
+                        errorMessage.textContent = 'Unexpected response format. Please try again.';
+                    }
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                    errorMessage.textContent = 'Failed to connect to the server';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

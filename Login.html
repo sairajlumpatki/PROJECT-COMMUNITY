@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #cfeef1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 400px;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .page-heading {
+            text-align: center;
+            color: #333;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            padding: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-group button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .form-group button:hover {
+            background-color: #2980b9;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .forgot-password a {
+            color: #0a0a0a;
+            text-decoration: none;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Log In Here</div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit" onclick="validateLogin()">Login</button>
+            <div class="forgot-password">
+                <a href="#">Forgot Password?</a>
+            </div>
+            <div class="error-message" id="error-message"></div>
+        </div>
+    </div>
+
+    <script>
+        async function validateLogin() {
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var errorMessage = document.getElementById('error-message');
+
+            if (email.trim() === '' || password.trim() === '') {
+                errorMessage.textContent = 'Please enter both email and password.';
+            } else {
+                try {
+                    const response = await fetch('http://localhost:5500/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password,
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        errorMessage.textContent = 'Invalid email or password. Please try again.';
+                        return;
+                    }
+
+                    // Check if the response contains JSON data
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const data = await response.json();
+                        console.log('Login successful:', data.success);
+
+                        // Redirect to AvailableProjects.html after successful login
+                        window.location.href = 'AvailableProjects.html';
+                    } else {
+                        errorMessage.textContent = 'Unexpected response format. Please try again.';
+                    }
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                    errorMessage.textContent = 'Failed to connect to the server';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
