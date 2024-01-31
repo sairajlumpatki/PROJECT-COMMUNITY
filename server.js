@@ -13,6 +13,7 @@ app.use(express.json());
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
+  databaseURL: "project-community-1643c"
 });
 
 // Initialize Firestore
@@ -141,6 +142,22 @@ app.post("/submitcontribution", async (req, res) => {
   } catch (error) {
     console.error("Error submitting the contribution", error);
     res.status(500).json({ error: "Internal Server error" });
+  }
+});
+
+app.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  try {
+    await firebase.auth().sendPasswordResetEmail(email);
+    return res.json({ success: 'Password reset email sent successfully' });
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+    return res.status(500).json({ error: 'Failed to send password reset email' });
   }
 });
 
