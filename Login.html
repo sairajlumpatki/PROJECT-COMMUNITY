@@ -142,8 +142,10 @@
                     const contentType = response.headers.get('content-type');
                     if (contentType && contentType.includes('application/json')) {
                         const data = await response.json();
-                        console.log('Login successful:', data.success);
-
+                        window.alert("You have been logged in successfully!!")
+                        console.log(data.success); 
+                        
+                        localStorage.setItem('loggedIn', 'true');
                         // Redirect to AvailableProjects.html after successful login
                         window.location.href = 'AvailableProjects.html';
                     } else {

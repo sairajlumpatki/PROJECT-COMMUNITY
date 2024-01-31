@@ -148,6 +148,7 @@
                     if (contentType && contentType.includes('application/json')) {
                         const data = await response.json();
                         console.log('Registration successful:', data.success);
+                        alert("You have now registered successully!!")
                         window.location.href="Login.html";
                     } else {
                         errorMessage.textContent = 'Unexpected response format. Please try again.';

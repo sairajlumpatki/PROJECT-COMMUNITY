@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>Welcome Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,7 +42,7 @@
             font-size: 24px;
             font-weight: bold;
             text-align: center;
-            padding: 25px;
+            padding: 5px;
             margin-bottom: 500px;
         }
 
@@ -92,33 +92,60 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
+        .profile {
+            position: absolute;
+            top: 10px;
+            left: 80px;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .allprojects {
+
+            position: absolute;
+            top: 10px;
+            left: 170px;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .contributeproject {
+            
+            position: absolute;
+            top: 10px;
+            left: 235px;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <button class="logout" onclick="logOut()">Log Out</button>
+    <button class="logout" onclick="logout()">Log Out</button>
+    <button class = "profile" onclick="navigate('profile')">All Projects</button>
+    <button class = "allprojects" onclick="navigate('AvailableProjects')">Profile</button>
+    <button class = "contributeproject" onclick="navigate('UploadFile')">Contribute Project</button>
+    
     <div class="menu">
-        <button onclick="viewContributions()">My Contributions</button>
-        <button onclick="viewMessages()">Messages / Feedbacks</button>
-        <button onclick="viewDownloads()">My Downloads</button>
+        <button onclick="navigate('contributions')">My Contributions</button>
+        <button onclick="navigate('messages')">Messages / Feedbacks</button>
+        <button onclick="navigate('downloads')">My Downloads</button>
     </div>
 
-    <div class="header">User Profile</div>
-    <script>
-        function viewContributions(){
-            window.location.href="MyContributions.html"
-        }
-
-        function viewMessages(){
-            window.location.href="Feedbacks.html"
-        }
-
-        function viewDownloads(){
-            window.location.href="MyDownloads.html"
-        }
-
-        function logOut(){
-            window.location.href="Login.html"
-        }
-    </script>
+    <div class="header"><h5>Welcome to the PROJECT COMMUNITY !!!</h5>
+        <h6>"Feel the Joy of Sharing...!"</h6>  
+    </div>
 </body>
 </html>

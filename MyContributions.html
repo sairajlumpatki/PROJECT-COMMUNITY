@@ -95,14 +95,30 @@
     </style>
 </head>
 <body>
-    <button class="logout" onclick="logout()">Log Out</button>
+    <button class="logout" onclick="logOut()">Log Out</button>
     <div class="menu">
-        <button onclick="navigate('profile')">Profile</button>
-        <button onclick="navigate('contributions')">My Contributions</button>
-        <button onclick="navigate('messages')">Messages / Feedbacks</button>
-        <button onclick="navigate('downloads')">My Downloads</button>
+        <button onclick="viewProfile()">Profile</button>
+        <button onclick="viewMessages()">Messages / Feedbacks</button>
+        <button onclick="viewDownloads()">My Downloads</button>
     </div>
 
     <div class="header">My Contributions</div>
+    <script>
+        function viewProfile(){
+            window.location.href="ContributerProfile.html";
+        }
+
+        function viewMessages(){
+            window.location.href="Feedbacks.html";
+        }
+
+        function viewDownloads(){
+            window.location.href="MyDownloads.html";
+        }
+
+        function logOut(){
+            window.location.href="Login.html"
+        }
+    </script>
 </body>
 </html>
